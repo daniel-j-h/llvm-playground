@@ -9,6 +9,6 @@
 with import <nixpkgs> {}; {
   devEnv = stdenv.mkDerivation {
     name = "llvm-playground";
-    buildInputs = [ cmake ninja inotify-tools llvm clang ];
+    buildInputs = [ cmake ninja inotify-tools boost llvm clang ];
   };
 }
