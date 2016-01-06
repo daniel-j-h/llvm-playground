@@ -1,6 +1,9 @@
 build
 
 .*.swp
+a.out*
+*.ll
+*.bc
 
 perf.data
 perf.data.old

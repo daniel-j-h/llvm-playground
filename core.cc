@@ -1,5 +1,3 @@
-#include <boost/program_options.hpp>
-
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
@@ -7,35 +5,10 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/Support/raw_ostream.h>
 
-
 #include <cstdlib>
 
-#include <string>
-#include <iostream>
-#include <stdexcept>
 
-
-int main(int argc, char** argv) try {
-  // Commandline Arguments
-  boost::program_options::options_description optionDescription{"Options"};
-  optionDescription.add_options()                                                      //
-      ("help", "Help on Usage")                                                        //
-      ("IRFile", boost::program_options::value<std::string>()->required(), "IR File"); //
-
-  boost::program_options::variables_map variablesMap;
-  store(boost::program_options::command_line_parser{argc, argv}.options(optionDescription).run(), variablesMap);
-
-  if (variablesMap.count("help")) {
-    std::cerr << optionDescription;
-    return EXIT_FAILURE;
-  }
-
-  notify(variablesMap);
-
-  const auto IRFile = variablesMap["IRFile"].as<std::string>();
-
-
-  // LLVM Setup
+int main(int /*argc*/, char** /*argv*/) {
   auto& context = llvm::getGlobalContext();
   llvm::Module module{"TopModule", context};
 
@@ -54,8 +27,7 @@ int main(int argc, char** argv) try {
 
   builder.SetInsertPoint(fnBasicBlock);
 
-  auto* fourtyTwo = builder.getInt32(42);
-  auto* retInst = builder.CreateRet(fourtyTwo);
+  (void)builder.CreateRet(builder.getInt32(42));
 
   if (llvm::verifyFunction(*fn, &llvm::errs()))
     return EXIT_FAILURE;
@@ -64,8 +36,4 @@ int main(int argc, char** argv) try {
     return EXIT_FAILURE;
 
   module.dump();
-
-} catch (const std::exception& e) {
-  llvm::errs() << "Error: " << e.what() << '\n';
-  return EXIT_FAILURE;
 }
